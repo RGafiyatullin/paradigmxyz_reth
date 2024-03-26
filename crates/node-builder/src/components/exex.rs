@@ -17,7 +17,7 @@ use tokio_util::sync::PollSender;
 // - exex channel size
 // - manager buffer metrics
 // - throughput
-pub struct ExExMetrics;
+struct ExExMetrics;
 
 /// The execution extension manager.
 ///
@@ -30,7 +30,7 @@ pub struct ExExMetrics;
 /// - Monitoring
 ///
 /// TBD
-pub struct ExExManager {
+struct ExExManager {
     // todo: exex receiver - get exex events
     /// Channels from the manager to execution extensions.
     exex_tx: Vec<PollSender<CanonStateNotification>>,
