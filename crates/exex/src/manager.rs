@@ -55,6 +55,9 @@ struct ExExManager {
     /// block number for pruner/exec stage (tbd)
     /// todo: this is inclusive, note that in exex too, maybe rename FinishedHeight
     block: watch::Sender<BlockNumber>,
+
+    /// tbd
+    handle: ExExManagerHandle,
 }
 
 impl Future for ExExManager {
@@ -95,12 +98,4 @@ impl ExExManagerHandle {
     pub async fn ready(&self) {
         todo!()
     }
-}
-
-pub fn spawn(task_executor: ()) -> Result<ExExManagerHandle, ()> {
-    // create cahnnels
-    // spawn manager
-    // spawns exexs?
-    // return handle
-    todo!()
 }

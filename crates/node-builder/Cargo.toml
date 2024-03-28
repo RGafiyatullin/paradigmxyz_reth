@@ -35,7 +35,6 @@ reth-prune.workspace = true
 reth-stages.workspace = true
 reth-config.workspace = true
 
-
 ## async
 futures.workspace = true
 tokio = { workspace = true, features = [
@@ -44,7 +43,6 @@ tokio = { workspace = true, features = [
   "time",
   "rt-multi-thread",
 ] }
-tokio-util.workspace = true
 
 ## misc
 aquamarine.workspace = true
