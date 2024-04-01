@@ -96,10 +96,11 @@ impl Logger for RpcServerMetrics {
 
     fn on_connect(
         &self,
-        _remote_addr: SocketAddr,
+        remote_addr: SocketAddr,
         _request: &HttpRequest,
         transport: TransportProtocol,
     ) {
+        tracing::trace!("on-connect [remote-addr: {}]", remote_addr);
         self.inner.connection_metrics.get_metrics(transport).connections_opened.increment(1)
     }
 
@@ -115,6 +116,7 @@ impl Logger for RpcServerMetrics {
         _kind: MethodKind,
         _transport: TransportProtocol,
     ) {
+        tracing::trace!("on-call [method: {}]", method_name);
         let Some(call_metrics) = self.inner.call_metrics.get(method_name) else { return };
         call_metrics.started.increment(1);
     }
@@ -144,7 +146,8 @@ impl Logger for RpcServerMetrics {
         metrics.requests_finished.increment(1);
     }
 
-    fn on_disconnect(&self, _remote_addr: SocketAddr, transport: TransportProtocol) {
+    fn on_disconnect(&self, remote_addr: SocketAddr, transport: TransportProtocol) {
+        tracing::trace!("on-disconnect [remote-addr: {}]", remote_addr);
         self.inner.connection_metrics.get_metrics(transport).connections_closed.increment(1)
     }
 }
