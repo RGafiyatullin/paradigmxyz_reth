@@ -105,6 +105,7 @@ impl Logger for RpcServerMetrics {
     }
 
     fn on_request(&self, transport: TransportProtocol) -> Self::Instant {
+        tracing::trace!("on-request");
         self.inner.connection_metrics.get_metrics(transport).requests_started.increment(1);
         Instant::now()
     }
@@ -128,6 +129,8 @@ impl Logger for RpcServerMetrics {
         started_at: Self::Instant,
         _transport: TransportProtocol,
     ) {
+        tracing::trace!("on-result [method: {}; outcome: {:?}]", method_name, success);
+
         let Some(call_metrics) = self.inner.call_metrics.get(method_name) else { return };
 
         // capture call latency
