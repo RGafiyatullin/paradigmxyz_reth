@@ -114,10 +114,10 @@ impl Logger for RpcServerMetrics {
         &self,
         method_name: &str,
         _params: Params<'_>,
-        _kind: MethodKind,
+        kind: MethodKind,
         _transport: TransportProtocol,
     ) {
-        tracing::trace!("on-call [method: {}]", method_name);
+        tracing::trace!("on-call [method: {}; method-kind: {}]", method_name, kind);
         let Some(call_metrics) = self.inner.call_metrics.get(method_name) else { return };
         call_metrics.started.increment(1);
     }
