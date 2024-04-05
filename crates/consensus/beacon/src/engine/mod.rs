@@ -376,6 +376,8 @@ where
         let make_canonical_result = self.blockchain.make_canonical(&state.head_block_hash);
         let elapsed = self.record_make_canonical_latency(start, &make_canonical_result);
 
+        tracing::error!(target: "consensus::engine", make_canonical_result = ?make_canonical_result);
+
         let status = match make_canonical_result {
             Ok(outcome) => {
                 match &outcome {

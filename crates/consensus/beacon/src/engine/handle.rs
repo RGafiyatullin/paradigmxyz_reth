@@ -66,6 +66,8 @@ where
         state: ForkchoiceState,
         payload_attrs: Option<Engine::PayloadAttributes>,
     ) -> Result<ForkchoiceUpdated, BeaconForkChoiceUpdateError> {
+        tracing::warn!("BeaconConsensusEngineHandle::fork_choice_updated [state: {:?}; attrs: {:?}]", state, payload_attrs);
+
         Ok(self
             .send_fork_choice_updated(state, payload_attrs)
             .map_err(|_| BeaconForkChoiceUpdateError::EngineUnavailable)

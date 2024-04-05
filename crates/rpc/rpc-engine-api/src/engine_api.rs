@@ -446,6 +446,8 @@ where
         state: ForkchoiceState,
         payload_attrs: Option<EngineT::PayloadAttributes>,
     ) -> EngineApiResult<ForkchoiceUpdated> {
+        tracing::warn!("EngineApi::validate_and_execute_forkchoice [version: {:?}, state: {:?}; attrs: {:?}]", version, state, payload_attrs);
+
         if let Some(ref attrs) = payload_attrs {
             let attr_validation_res =
                 attrs.ensure_well_formed_attributes(&self.inner.chain_spec, version);
@@ -464,6 +466,8 @@ where
             // To do this, we set the payload attrs to `None` if attribute validation failed, but
             // we still apply the forkchoice update.
             if let Err(err) = attr_validation_res {
+                tracing::warn!("EngineApi::validate_and_execute_forkchoice [attr-validation-err: {}]", err);
+
                 let fcu_res = self.inner.beacon_consensus.fork_choice_updated(state, None).await?;
                 // TODO: decide if we want this branch - the FCU INVALID response might be more
                 // useful than the payload attributes INVALID response
