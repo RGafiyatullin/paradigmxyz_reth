@@ -72,10 +72,10 @@ pub enum ProviderError {
     #[error("best block does not exist")]
     BestBlockNotFound,
     /// Unable to find the finalized block.
-    #[error("finalized block does not exist")]
+    #[error("finalized block not found")]
     FinalizedBlockNotFound,
     /// Unable to find the safe block.
-    #[error("safe block does not exist")]
+    #[error("safe block not found")]
     SafeBlockNotFound,
     /// Mismatch of sender and transaction.
     #[error("mismatch of sender and transaction id {tx_id}")]
