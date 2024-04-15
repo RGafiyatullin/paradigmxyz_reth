@@ -14,3 +14,32 @@ rustflags = [
     # in line with Linux (whereas default for Windows is 1MB)
     "-Clink-arg=/STACK:10000000",
 ]
+
+# [patch."https://github.com/alloy-rs/alloy"]
+# alloy-rpc-types = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-rpc-types-anvil = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-rpc-types-trace = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-rpc-types-engine = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-genesis = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-node-bindings = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-provider = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-eips = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-signer = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-network = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+# alloy-consensus = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
+
+
+[patch."https://github.com/alloy-rs/alloy"]
+alloy-rpc-types = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-rpc-types-anvil = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-rpc-types-trace = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-rpc-types-engine = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-genesis = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-node-bindings = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-provider = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-eips = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-signer = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-network = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+alloy-consensus = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
+
+
