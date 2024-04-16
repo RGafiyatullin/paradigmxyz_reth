@@ -7,8 +7,7 @@ use reth_db::{
 };
 use reth_interfaces::{db::DatabaseError, provider::ProviderResult};
 use reth_primitives::{
-    stage::StageId, Account, Bytecode, ChainSpec, Receipts, StaticFileSegment, StorageEntry, B256,
-    U256,
+    stage::StageId, Account, Bytecode, ChainExtraConfig, ChainSpec, Receipts, StaticFileSegment, StorageEntry, B256, U256
 };
 use reth_provider::{
     bundle_state::{BundleStateInit, RevertsInit},
@@ -98,7 +97,7 @@ pub fn init_genesis<DB: Database>(factory: ProviderFactory<DB>) -> Result<B256, 
 /// Inserts the genesis state into the database.
 pub fn insert_genesis_state<DB: Database>(
     tx: &<DB as Database>::TXMut,
-    genesis: &reth_primitives::Genesis,
+    genesis: &reth_primitives::Genesis<ChainExtraConfig>,
 ) -> ProviderResult<()> {
     let capacity = genesis.alloc.len();
     let mut state_init: BundleStateInit = HashMap::with_capacity(capacity);
@@ -165,7 +164,7 @@ pub fn insert_genesis_state<DB: Database>(
 /// Inserts hashes for the genesis state.
 pub fn insert_genesis_hashes<DB: Database>(
     provider: &DatabaseProviderRW<DB>,
-    genesis: &reth_primitives::Genesis,
+    genesis: &reth_primitives::Genesis<ChainExtraConfig>,
 ) -> ProviderResult<()> {
     // insert and hash accounts to hashing table
     let alloc_accounts = genesis
@@ -192,7 +191,7 @@ pub fn insert_genesis_hashes<DB: Database>(
 /// Inserts history indices for genesis accounts and storage.
 pub fn insert_genesis_history<DB: Database>(
     provider: &DatabaseProviderRW<DB>,
-    genesis: &reth_primitives::Genesis,
+    genesis: &reth_primitives::Genesis<ChainExtraConfig>,
 ) -> ProviderResult<()> {
     let account_transitions =
         genesis.alloc.keys().map(|addr| (*addr, vec![0])).collect::<BTreeMap<_, _>>();

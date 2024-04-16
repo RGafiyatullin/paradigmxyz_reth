@@ -1,5 +1,5 @@
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
-use reth_primitives::{AnyNode, NodeRecord};
+use reth_primitives::{AnyNode, ChainExtraConfig, NodeRecord};
 use reth_rpc_types::{admin::NodeInfo, PeerInfo};
 
 /// Admin namespace rpc interface that gives access to several non-standard RPC methods.
@@ -44,5 +44,5 @@ pub trait AdminApi {
 
     /// Returns the ENR of the node.
     #[method(name = "nodeInfo")]
-    async fn node_info(&self) -> RpcResult<NodeInfo>;
+    async fn node_info(&self) -> RpcResult<NodeInfo<ChainExtraConfig>>;
 }

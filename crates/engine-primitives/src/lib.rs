@@ -128,32 +128,18 @@ pub fn validate_withdrawals_presence(
     timestamp: u64,
     has_withdrawals: bool,
 ) -> Result<(), EngineObjectValidationError> {
+    use EngineApiMessageVersion::*;
+    use VersionSpecificValidationError::*;
+    
     let is_shanghai = chain_spec.is_shanghai_active_at_timestamp(timestamp);
-
-    match version {
-        EngineApiMessageVersion::V1 => {
-            if has_withdrawals {
-                return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::WithdrawalsNotSupportedInV1))
-            }
-            if is_shanghai {
-                return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::NoWithdrawalsPostShanghai))
-            }
-        }
-        EngineApiMessageVersion::V2 | EngineApiMessageVersion::V3 => {
-            if is_shanghai && !has_withdrawals {
-                return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::NoWithdrawalsPostShanghai))
-            }
-            if !is_shanghai && has_withdrawals {
-                return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::HasWithdrawalsPreShanghai))
-            }
-        }
-    };
-
-    Ok(())
+    
+    match (version, has_withdrawals, is_shanghai) {
+        (V1, true, _) => Err(message_validation_kind.to_error(WithdrawalsNotSupportedInV1)),
+        (V1, false, true) => Err(message_validation_kind.to_error(NoWithdrawalsPostShanghai)),
+        (V2 | V3, false, true) => Err(message_validation_kind.to_error(NoWithdrawalsPostShanghai)),
+        (V2 | V3, true, false) => Err(message_validation_kind.to_error(HasWithdrawalsPreShanghai)),
+        (_ ,_ ,_) => Ok(()),
+    }
 }
 
 /// Validate the presence of the `parentBeaconBlockRoot` field according to the given timestamp.

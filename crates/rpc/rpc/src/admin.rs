@@ -3,7 +3,7 @@ use alloy_primitives::B256;
 use async_trait::async_trait;
 use jsonrpsee::core::RpcResult;
 use reth_network_api::{NetworkInfo, PeerKind, Peers};
-use reth_primitives::{AnyNode, ChainSpec, NodeRecord};
+use reth_primitives::{AnyNode, ChainExtraConfig, ChainSpec, NodeRecord};
 use reth_rpc_api::AdminApiServer;
 use reth_rpc_types::{
     admin::{EthProtocolInfo, NodeInfo, Ports, ProtocolInfo},
@@ -90,7 +90,7 @@ where
     }
 
     /// Handler for `admin_nodeInfo`
-    async fn node_info(&self) -> RpcResult<NodeInfo> {
+    async fn node_info(&self) -> RpcResult<NodeInfo<ChainExtraConfig>> {
         let enode = self.network.local_node_record();
         let status = self.network.network_status().await.to_rpc_result()?;
         let config = self.chain_spec.genesis().config.clone();

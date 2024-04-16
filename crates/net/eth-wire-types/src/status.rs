@@ -2,7 +2,7 @@ use crate::EthVersion;
 use alloy_rlp::{RlpDecodable, RlpEncodable};
 use reth_codecs::derive_arbitrary;
 use reth_primitives::{
-    hex, Chain, ChainSpec, ForkId, Genesis, Hardfork, Head, NamedChain, B256, MAINNET, U256,
+    hex, Chain, ChainExtraConfig, ChainSpec, ForkId, Genesis, Hardfork, Head, NamedChain, B256, MAINNET, U256
 };
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -42,8 +42,8 @@ pub struct Status {
     pub forkid: ForkId,
 }
 
-impl From<Genesis> for Status {
-    fn from(genesis: Genesis) -> Status {
+impl From<Genesis<ChainExtraConfig>> for Status {
+    fn from(genesis: Genesis<ChainExtraConfig>) -> Status {
         let chain = genesis.config.chain_id;
         let total_difficulty = genesis.difficulty;
         let chainspec = ChainSpec::from(genesis);

@@ -28,6 +28,8 @@ nybbles = { workspace = true, features = ["serde", "rlp"] }
 alloy-genesis.workspace = true
 alloy-eips.workspace = true
 enr = { workspace = true, features = ["rust-secp256k1"] }
+alloy-serde.workspace = true
+alloy-serde.optional = true
 
 # crypto
 secp256k1 = { workspace = true, features = ["global-context", "recovery", "rand"] }
@@ -110,6 +112,7 @@ zstd-codec = [
 ]
 clap = ["dep:clap"]
 optimism = [
+    "dep:alloy-serde",
     "reth-codecs/optimism",
     "revm-primitives/optimism",
     "reth-ethereum-forks/optimism",

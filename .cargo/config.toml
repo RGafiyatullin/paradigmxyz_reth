@@ -16,30 +16,29 @@ rustflags = [
 ]
 
 # [patch."https://github.com/alloy-rs/alloy"]
-# alloy-rpc-types = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-rpc-types-anvil = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-rpc-types-trace = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-rpc-types-engine = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-genesis = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-node-bindings = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-provider = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-eips = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-signer = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-network = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-# alloy-consensus = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", rev = "a2311044"}
-
+# alloy-rpc-types = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-rpc-types-anvil = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-rpc-types-trace = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-rpc-types-engine = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-genesis = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-node-bindings = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-provider = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-eips = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-signer = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-network = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-consensus = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
+# alloy-serde = {git = "file:///Users/rg/Projects/xyz.lattice/alloy", branch = "thatroma/alloy-genesis-additional-fields"}
 
 [patch."https://github.com/alloy-rs/alloy"]
-alloy-rpc-types = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-rpc-types-anvil = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-rpc-types-trace = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-rpc-types-engine = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-genesis = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-node-bindings = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-provider = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-eips = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-signer = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-network = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-alloy-consensus = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", rev = "a2311044"}
-
-
+alloy-rpc-types = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-rpc-types-anvil = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-rpc-types-trace = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-rpc-types-engine = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-genesis = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-node-bindings = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-provider = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields", default-features = false, features = ["reqwest"] }
+alloy-eips = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-signer = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-network = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-consensus = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}
+alloy-serde = {git = "https://github.com/RGafiyatullin/alloy-rs_alloy.git", branch = "thatroma/alloy-genesis-additional-fields"}

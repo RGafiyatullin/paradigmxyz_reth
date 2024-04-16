@@ -497,6 +497,43 @@ impl From<Vec<(Hardfork, BaseFeeParams)>> for ForkBaseFeeParams {
     }
 }
 
+
+#[cfg(feature = "optimism")]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct OptimismExtraConfig {
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "::alloy_serde::u64_hex_or_decimal_opt::deserialize"
+    )]
+    pub bedrock_time: Option<u64>,
+
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "::alloy_serde::u64_hex_or_decimal_opt::deserialize"
+    )]
+    pub regolith_time: Option<u64>,
+
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "::alloy_serde::u64_hex_or_decimal_opt::deserialize"
+    )]
+    pub canyon_time: Option<u64>,
+
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "::alloy_serde::u64_hex_or_decimal_opt::deserialize"
+    )]
+    pub ecotone_time: Option<u64>,
+}
+
+#[cfg(not(feature = "optimism"))]
+pub type ChainExtraConfig = ();
+
+#[cfg(feature = "optimism")]
+pub type ChainExtraConfig = OptimismExtraConfig;
+
+
 /// An Ethereum chain specification.
 ///
 /// A chain specification describes:
@@ -517,7 +554,7 @@ pub struct ChainSpec {
     pub genesis_hash: Option<B256>,
 
     /// The genesis block
-    pub genesis: Genesis,
+    pub genesis: Genesis<ChainExtraConfig>,
 
     /// The block at which [Hardfork::Paris] was activated and the final difficulty at this block.
     #[serde(skip, default)]
@@ -577,7 +614,7 @@ impl ChainSpec {
     /// Get the genesis block specification.
     ///
     /// To get the header for the genesis block, use [`Self::genesis_header`] instead.
-    pub fn genesis(&self) -> &Genesis {
+    pub fn genesis(&self) -> &Genesis<ChainExtraConfig> {
         &self.genesis
     }
 
@@ -918,8 +955,8 @@ impl ChainSpec {
     }
 }
 
-impl From<Genesis> for ChainSpec {
-    fn from(genesis: Genesis) -> Self {
+impl From<Genesis<ChainExtraConfig>> for ChainSpec {
+    fn from(genesis: Genesis<ChainExtraConfig>) -> Self {
         // Block-based hardforks
         let hardfork_opts = [
             (Hardfork::Homestead, genesis.config.homestead_block),
@@ -961,6 +998,15 @@ impl From<Genesis> for ChainSpec {
         let time_hardfork_opts = [
             (Hardfork::Shanghai, genesis.config.shanghai_time),
             (Hardfork::Cancun, genesis.config.cancun_time),
+
+            #[cfg(feature = "optimism")]
+            (Hardfork::Bedrock, genesis.config.extra.bedrock_time),
+            #[cfg(feature = "optimism")]
+            (Hardfork::Regolith, genesis.config.extra.regolith_time),
+            #[cfg(feature = "optimism")]
+            (Hardfork::Canyon, genesis.config.extra.canyon_time),
+            #[cfg(feature = "optimism")]
+            (Hardfork::Ecotone, genesis.config.extra.ecotone_time),
         ];
 
         let time_hardforks = time_hardfork_opts
@@ -971,6 +1017,8 @@ impl From<Genesis> for ChainSpec {
             .collect::<BTreeMap<_, _>>();
 
         hardforks.extend(time_hardforks);
+
+        eprintln!("ChainSpec::from_genesis [hardforks: {:#?}]", hardforks);
 
         Self {
             chain: genesis.config.chain_id.into(),
@@ -1069,11 +1117,11 @@ pub enum AllGenesisFormats {
     /// The reth genesis format
     Reth(ChainSpec),
     /// The geth genesis format
-    Geth(Genesis),
+    Geth(Genesis<ChainExtraConfig>),
 }
 
-impl From<Genesis> for AllGenesisFormats {
-    fn from(genesis: Genesis) -> Self {
+impl From<Genesis<ChainExtraConfig>> for AllGenesisFormats {
+    fn from(genesis: Genesis<ChainExtraConfig>) -> Self {
         Self::Geth(genesis)
     }
 }
@@ -1103,7 +1151,7 @@ impl From<AllGenesisFormats> for ChainSpec {
 #[derive(Debug, Default, Clone)]
 pub struct ChainSpecBuilder {
     chain: Option<Chain>,
-    genesis: Option<Genesis>,
+    genesis: Option<Genesis<ChainExtraConfig>>,
     hardforks: BTreeMap<Hardfork, ForkCondition>,
 }
 
@@ -1124,7 +1172,7 @@ impl ChainSpecBuilder {
     }
 
     /// Set the genesis block.
-    pub fn genesis(mut self, genesis: Genesis) -> Self {
+    pub fn genesis(mut self, genesis: Genesis<ChainExtraConfig>) -> Self {
         self.genesis = Some(genesis);
         self
     }
