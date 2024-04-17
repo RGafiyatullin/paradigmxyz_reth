@@ -1018,8 +1018,6 @@ impl From<Genesis<ChainExtraConfig>> for ChainSpec {
 
         hardforks.extend(time_hardforks);
 
-        eprintln!("ChainSpec::from_genesis [hardforks: {:#?}]", hardforks);
-
         Self {
             chain: genesis.config.chain_id.into(),
             genesis,

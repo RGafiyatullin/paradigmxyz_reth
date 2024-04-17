@@ -485,25 +485,34 @@ where
                 best_payload: None,
             };
 
-            // TODO: create optimism payload job, that wraps this type, that implements PayloadJob
-            // with this branch. remove this branch from the non-op code. remove
-            // `on_missing_payload` requirement from builder trait
-            if let Some(payload) = self.builder.on_missing_payload(args) {
-                debug!(target: "payload_builder", id=%self.config.payload_id(), "resolving fallback payload as best payload");
-                return (
-                    ResolveBestPayload { best_payload: Some(payload), maybe_better, empty_payload },
-                    KeepPayloadJobAlive::Yes,
-                )
-            }
+            // // TODO: create optimism payload job, that wraps this type, that implements PayloadJob
+            // // with this branch. remove this branch from the non-op code. remove
+            // // `on_missing_payload` requirement from builder trait
+            // if let Some(payload) = self.builder.on_missing_payload(args) {
+            //     debug!(target: "payload_builder", id=%self.config.payload_id(), "resolving fallback payload as best payload");
+            //     return (
+            //         ResolveBestPayload { best_payload: Some(payload), maybe_better, empty_payload },
+            //         KeepPayloadJobAlive::Yes,
+            //     )
+            // }
 
             // if no payload has been built yet
             self.metrics.inc_requested_empty_payload();
+
             // no payload built yet, so we need to return an empty payload
             let (tx, rx) = oneshot::channel();
             let client = self.client.clone();
             let config = self.config.clone();
+            let builder = self.builder.clone();
             self.executor.spawn_blocking(Box::pin(async move {
-                let res = Builder::build_empty_payload(&client, config);
+                tracing::error!("<BasicPayloadJob<...> as PayloadJob>::resolve spawned task");
+                let res = builder
+                            .try_build(args)
+                            .and_then(|outcome| match outcome {
+                                BuildOutcome::Better { payload, .. } => Ok(payload),
+                                _ => Builder::build_empty_payload(&client, config),
+                            });
+                
                 let _ = tx.send(res);
             }));
 

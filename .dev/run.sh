@@ -1,7 +1,7 @@
 #!/bin/sh
 
 BUILDER_IMAGE=${BUILDER_IMAGE:-'build-reth:dev'}
-TARGET_DIR_VOLUME=${TARGET_DIR_VOLUME:-'ops-bedrock_reth_build'}
+TARGET_DIR_VOLUME=${TARGET_DIR_VOLUME:-'build-reth_target_dir'}
 DOCKER=${DOCKER:-docker}
 
 
@@ -13,7 +13,6 @@ PROJECTS_DIR=$(dirname $(dirname "$THIS_DIR"))
 docker build -t "${BUILDER_IMAGE}" "${THIS_DIR}"
 
 cd "${PROJECTS_DIR}/reth"
-
 
 
 in-docker \
