@@ -7,6 +7,8 @@ use crate::{
     Address, BlockNumber, Chain, ForkFilter, ForkFilterKey, ForkHash, ForkId, Genesis, Hardfork,
     Head, Header, NamedChain, NodeRecord, SealedHeader, B256, EMPTY_OMMER_ROOT_HASH, U256,
 };
+use alloy_genesis::ChainConfig;
+use alloy_primitives::ChainId;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -508,7 +510,8 @@ impl From<Vec<(Hardfork, BaseFeeParams)>> for ForkBaseFeeParams {
 /// - The genesis block of the chain ([`Genesis`])
 /// - What hardforks are activated, and under which conditions
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
-pub struct ChainSpec {
+#[serde(bound = "Genesis<C>: ::serde::Serialize + serde::de::DeserializeOwned")]
+pub struct ChainSpec<C = ChainConfig> {
     /// The chain ID
     pub chain: Chain,
 
@@ -520,7 +523,7 @@ pub struct ChainSpec {
     pub genesis_hash: Option<B256>,
 
     /// The genesis block
-    pub genesis: Genesis,
+    pub genesis: Genesis<C>,
 
     /// The block at which [Hardfork::Paris] was activated and the final difficulty at this block.
     #[serde(skip, default)]
@@ -549,8 +552,11 @@ pub struct ChainSpec {
     pub prune_delete_limit: usize,
 }
 
-impl Default for ChainSpec {
-    fn default() -> ChainSpec {
+impl<C> Default for ChainSpec<C>
+where
+    Genesis<C>: Default,
+{
+    fn default() -> Self {
         ChainSpec {
             chain: Default::default(),
             genesis_hash: Default::default(),
@@ -954,62 +960,29 @@ impl ChainSpec {
     }
 }
 
-impl From<Genesis> for ChainSpec {
-    fn from(genesis: Genesis) -> Self {
-        // Block-based hardforks
-        let hardfork_opts = [
-            (Hardfork::Homestead, genesis.config.homestead_block),
-            (Hardfork::Dao, genesis.config.dao_fork_block),
-            (Hardfork::Tangerine, genesis.config.eip150_block),
-            (Hardfork::SpuriousDragon, genesis.config.eip155_block),
-            (Hardfork::Byzantium, genesis.config.byzantium_block),
-            (Hardfork::Constantinople, genesis.config.constantinople_block),
-            (Hardfork::Petersburg, genesis.config.petersburg_block),
-            (Hardfork::Istanbul, genesis.config.istanbul_block),
-            (Hardfork::MuirGlacier, genesis.config.muir_glacier_block),
-            (Hardfork::Berlin, genesis.config.berlin_block),
-            (Hardfork::London, genesis.config.london_block),
-            (Hardfork::ArrowGlacier, genesis.config.arrow_glacier_block),
-            (Hardfork::GrayGlacier, genesis.config.gray_glacier_block),
-        ];
-        let mut hardforks = hardfork_opts
-            .iter()
-            .filter_map(|(hardfork, opt)| opt.map(|block| (*hardfork, ForkCondition::Block(block))))
-            .collect::<BTreeMap<_, _>>();
-
-        // Paris
+impl<C> From<Genesis<C>> for ChainSpec<C>
+where
+    C: HasChainId + HasForkConditions<Hardfork>,
+    ChainSpec<C>: Default,
+{
+    fn from(genesis: Genesis<C>) -> Self {
         let paris_block_and_final_difficulty =
-            if let Some(ttd) = genesis.config.terminal_total_difficulty {
-                hardforks.insert(
+            genesis.config.fork_conditions().find_map(|(fork, condition)| {
+                if let (
                     Hardfork::Paris,
-                    ForkCondition::TTD {
-                        total_difficulty: ttd,
-                        fork_block: genesis.config.merge_netsplit_block,
-                    },
-                );
+                    ForkCondition::TTD { fork_block: Some(block), total_difficulty },
+                ) = (fork, condition)
+                {
+                    Some((block, total_difficulty))
+                } else {
+                    None
+                }
+            });
 
-                genesis.config.merge_netsplit_block.map(|block| (block, ttd))
-            } else {
-                None
-            };
-
-        // Time-based hardforks
-        let time_hardfork_opts = [
-            (Hardfork::Shanghai, genesis.config.shanghai_time),
-            (Hardfork::Cancun, genesis.config.cancun_time),
-        ];
-
-        let time_hardforks = time_hardfork_opts
-            .iter()
-            .filter_map(|(hardfork, opt)| {
-                opt.map(|time| (*hardfork, ForkCondition::Timestamp(time)))
-            })
-            .collect::<BTreeMap<_, _>>();
-
-        hardforks.extend(time_hardforks);
+        let hardforks = genesis.config.fork_conditions().collect();
 
         Self {
-            chain: genesis.config.chain_id.into(),
+            chain: genesis.config.chain_id().into(),
             genesis,
             genesis_hash: None,
             fork_timestamps: ForkTimestamps::from_hardforks(&hardforks),
@@ -1018,6 +991,60 @@ impl From<Genesis> for ChainSpec {
             deposit_contract: None,
             ..Default::default()
         }
+    }
+}
+
+pub trait HasChainId {
+    fn chain_id(&self) -> ChainId;
+}
+
+pub trait HasForkConditions<Fork> {
+    fn fork_conditions(&self) -> impl Iterator<Item = (Fork, ForkCondition)> + '_;
+}
+
+impl HasChainId for ChainConfig {
+    fn chain_id(&self) -> ChainId {
+        self.chain_id
+    }
+}
+
+impl HasForkConditions<Hardfork> for ChainConfig {
+    fn fork_conditions(&self) -> impl Iterator<Item = (Hardfork, ForkCondition)> + '_ {
+        let fork_at_block = [
+            (Hardfork::Homestead, self.homestead_block),
+            (Hardfork::Dao, self.dao_fork_block),
+            (Hardfork::Tangerine, self.eip150_block),
+            (Hardfork::SpuriousDragon, self.eip155_block),
+            (Hardfork::Byzantium, self.byzantium_block),
+            (Hardfork::Constantinople, self.constantinople_block),
+            (Hardfork::Petersburg, self.petersburg_block),
+            (Hardfork::Istanbul, self.istanbul_block),
+            (Hardfork::MuirGlacier, self.muir_glacier_block),
+            (Hardfork::Berlin, self.berlin_block),
+            (Hardfork::London, self.london_block),
+            (Hardfork::ArrowGlacier, self.arrow_glacier_block),
+            (Hardfork::GrayGlacier, self.gray_glacier_block),
+        ]
+        .into_iter()
+        .filter_map(|(key, maybe_block)| {
+            maybe_block.map(|block| (key, ForkCondition::Block(block)))
+        });
+
+        let fork_at_timestamp =
+            [(Hardfork::Shanghai, self.shanghai_time), (Hardfork::Cancun, self.cancun_time)]
+                .into_iter()
+                .filter_map(|(key, maybe_timestamp)| {
+                    maybe_timestamp.map(|timestamp| (key, ForkCondition::Timestamp(timestamp)))
+                });
+
+        let paris_fork_condition = self.terminal_total_difficulty.map(|ttd| {
+            (
+                Hardfork::Paris,
+                ForkCondition::TTD { total_difficulty: ttd, fork_block: self.merge_netsplit_block },
+            )
+        });
+
+        fork_at_block.chain(fork_at_timestamp).chain(paris_fork_condition)
     }
 }
 
