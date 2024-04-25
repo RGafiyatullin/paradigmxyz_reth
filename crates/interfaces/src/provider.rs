@@ -63,13 +63,13 @@ pub enum ProviderError {
     #[error("no receipt found for {0:?}")]
     ReceiptNotFound(TxHashOrNumber),
     /// Unable to find the best block.
-    #[error("best block does not exist")]
+    #[error("best block does not exist (block not found, right?)")]
     BestBlockNotFound,
     /// Unable to find the finalized block.
-    #[error("finalized block does not exist")]
+    #[error("finalized block does not exist (block not found, right?)")]
     FinalizedBlockNotFound,
     /// Unable to find the safe block.
-    #[error("safe block does not exist")]
+    #[error("safe block does not exist (block not found, right?)")]
     SafeBlockNotFound,
     /// Mismatch of sender and transaction.
     #[error("mismatch of sender and transaction id {tx_id}")]
